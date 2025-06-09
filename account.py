@@ -22,6 +22,15 @@ class Account:
             return self.balance * self.interest_rate
         return 0.0
 
+    def apply_interest(self, months=1):
+        """
+        Apply interest to the account balance for the given number of months.
+        Only applicable for savings accounts.
+        """
+        if self.account_type == "savings":
+            for _ in range(months):
+                self.balance += self.balance * self.interest_rate
+
     def get_balance(self):
         return self.balance
 

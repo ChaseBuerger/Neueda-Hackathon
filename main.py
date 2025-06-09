@@ -60,15 +60,36 @@ def logged_in_menu(bank, username):
         print("3. Show Balances")
         print("4. Create Account")
         print("5. Logout")
+        print("6. Simulate Growth")
         choice = input("Enter your choice: ")
 
         if choice == "1":  # Deposit logic
+            user_accounts = bank.accounts.get(username, {})
+            if not user_accounts:
+                print("No accounts found. Please create an account first.")
+                continue
+            print("Your accounts:")
+            for account_name in user_accounts.keys():
+                print(f"- {account_name}")
             account_name = input("Enter account name: ")
+            if account_name not in user_accounts:
+                print("Invalid account name. Try again.")
+                continue
             amount = float(input("Enter amount to deposit: "))
             result = bank.deposit(username, account_name, amount)
             print(result)
         elif choice == "2":  # Withdraw logic
+            user_accounts = bank.accounts.get(username, {})
+            if not user_accounts:
+                print("No accounts found. Please create an account first.")
+                continue
+            print("Your accounts:")
+            for account_name in user_accounts.keys():
+                print(f"- {account_name}")
             account_name = input("Enter account name: ")
+            if account_name not in user_accounts:
+                print("Invalid account name. Try again.")
+                continue
             amount = float(input("Enter amount to withdraw: "))
             result = bank.withdraw(username, account_name, amount)
             print(result)
@@ -86,8 +107,29 @@ def logged_in_menu(bank, username):
         elif choice == "5":
             print("Logging out...")
             break
+        elif choice == "6":  # Simulate growth
+            user_accounts = bank.accounts.get(username, {})
+            if not user_accounts:
+                print("No accounts found. Please create an account first.")
+                continue
+            print("Your accounts:")
+            for account_name in user_accounts.keys():
+                print(f"- {account_name}")
+            account_name = input("Enter account name: ")
+            if account_name not in user_accounts:
+                print("Invalid account name. Try again.")
+                continue
+            account = user_accounts[account_name]
+            result = "Entered account is not a savings account."  # Default message
+            if account.account_type == "savings":
+                months = int(input("Enter number of months to simulate: "))
+                result = bank.simulate_growth(username, account_name, months)
+            print(result)
         else:
             print("Invalid choice. Try again.")
+            
+        # Save data after each operation
+        save_data(bank)
 
 def main():
     bank = Bank()

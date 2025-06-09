@@ -35,7 +35,7 @@ class Bank:
         if amount <= 0:
             return "Deposit amount must be greater than zero."
         account.deposit(amount)
-        return f"Deposit successful to account {account_name}."
+        return f"Deposit successful to account {account_name}. Current balance: ${account.get_balance():.2f}"
 
     def withdraw(self, username, account_name, amount):
         account = self.get_account(username, account_name)
@@ -46,7 +46,7 @@ class Bank:
         if amount > account.balance:
             return f"Insufficient balance in account {account_name}. Current balance: ${account.balance:.2f}"
         account.withdraw(amount)
-        return f"Withdrawal successful from account {account_name}."
+        return f"Withdrawal successful from account {account_name}. Current balance: ${account.get_balance():.2f}"
 
     def save_to_data(self):
         return {
@@ -63,3 +63,20 @@ class Bank:
             username: {name: Account.from_dict(account_data) for name, account_data in accounts.items()}
             for username, accounts in data.get("accounts", {}).items()
         }
+
+    def simulate_growth(self, username, account_name, months):
+        account = self.get_account(username, account_name)
+        if not account:
+            return f"Account {account_name} not found."
+        if account.account_type != "savings":
+            return f"Interest simulation is only applicable for savings accounts."
+        
+        projected_balance = account.balance
+        for _ in range(months):
+            projected_balance += projected_balance * account.interest_rate
+        return f"Projected balance for account {account_name} after {months} months: ${projected_balance:.2f}"
+
+    def apply_interest_to_all(self, months=1):
+        for username, accounts in self.accounts.items():
+            for account in accounts.values():
+                account.apply_interest(months)

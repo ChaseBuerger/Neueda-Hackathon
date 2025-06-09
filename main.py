@@ -48,17 +48,14 @@ def main():
         elif choice == "3":
             username = input("Username: ")
             amount = float(input("Enter amount to deposit: "))
-            if bank.deposit(username, amount):
-                print("Deposit successful!")
-            else:
-                print("Deposit failed. Check username or account.")
+            message = bank.deposit(username, amount)
+            print(message)
+
         elif choice == "4":
             username = input("Username: ")
             amount = float(input("Enter amount to withdraw: "))
-            if bank.withdraw(username, amount):
-                print("Withdrawal successful!")
-            else:
-                print("Withdrawal failed. Check username, account, or balance.")
+            message = bank.withdraw(username, amount)
+            print(message)
         elif choice == "5":
             save_data(bank)
             print("Goodbye!")

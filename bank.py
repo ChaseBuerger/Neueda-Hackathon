@@ -27,16 +27,23 @@ class Bank:
 
     def deposit(self, username, amount):
         account = self.get_account(username)
-        if account:
-            account.deposit(amount)
-            return True
-        return False
+        if not account:
+            return "Account not found."
+        if amount <= 0:
+            return "Deposit amount must be greater than zero."
+        account.deposit(amount)
+        return "Deposit successful."
 
     def withdraw(self, username, amount):
         account = self.get_account(username)
-        if account:
-            return account.withdraw(amount)
-        return False
+        if not account:
+            return "Account not found."
+        if amount <= 0:
+            return "Withdrawal amount must be greater than zero."
+        if amount > account.balance:
+            return f"Insufficient balance. Current balance: {account.balance:.2f}"
+        account.withdraw(amount)
+        return "Withdrawal successful."
 
     def save_to_data(self):
         return {

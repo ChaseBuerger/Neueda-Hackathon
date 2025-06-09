@@ -1,1 +1,1 @@
-{"users": {"bob": {"username": "bob", "password": "123", "profile": {}}}, "accounts": {"bob": {"check": {"account_type": "checking", "account_name": "check", "balance": 116.0, "interest_rate": 0.0}, "sav": {"account_type": "savings", "account_name": "sav", "balance": 199.0, "interest_rate": 0.02}}}}
+{"test_user": {"savings1": {"account_type": "savings", "balance": 1000.0}, "checking1": {"account_type": "checking", "balance": 500.0}}}

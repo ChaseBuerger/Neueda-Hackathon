@@ -45,10 +45,25 @@ def main_menu(bank):
 
 def add_account(bank, username, password=None):
     account_name = input("Enter account name: ")
-    account_type = input("Account type (savings/checking): ").lower()
-    initial_deposit = float(input("Enter initial deposit amount: "))
-    if account_type not in ["savings", "checking"]:
-        return "Invalid account type."
+    
+    # Validate account type
+    while True:
+        account_type = input("Account type (savings/checking): ").lower()
+        if account_type in ["savings", "checking"]:
+            break
+        print("Invalid account type. Please enter 'savings' or 'checking'.")
+    
+    # Validate initial deposit
+    while True:
+        try:
+            initial_deposit = float(input("Enter initial deposit amount: "))
+            if initial_deposit < 0:
+                print("Initial deposit must be a positive number.")
+                continue
+            break
+        except ValueError:
+            print("Invalid input. Please enter a valid dollar amount.")
+    
     result = bank.create_account(username, password, account_type, account_name, initial_deposit)
     return result
 
@@ -73,11 +88,23 @@ def logged_in_menu(bank, username):
                 print(f"- {account_name}")
             account_name = input("Enter account name: ")
             if account_name not in user_accounts:
-                print("Invalid account name. Try again.")
+                print("Account does not exist.")  # Ensure this matches the test expectation
                 continue
-            amount = float(input("Enter amount to deposit: "))
+
+            # Validate deposit amount
+            while True:
+                try:
+                    amount = float(input("Enter amount to deposit: "))
+                    if amount <= 0:
+                        print("Deposit amount must be greater than zero.")
+                        continue
+                    break
+                except ValueError:
+                    print("Invalid input. Please enter a valid dollar amount.")
+
             result = bank.deposit(username, account_name, amount)
             print(result)
+
         elif choice == "2":  # Withdraw logic
             user_accounts = bank.accounts.get(username, {})
             if not user_accounts:
@@ -90,9 +117,24 @@ def logged_in_menu(bank, username):
             if account_name not in user_accounts:
                 print("Invalid account name. Try again.")
                 continue
-            amount = float(input("Enter amount to withdraw: "))
-            result = bank.withdraw(username, account_name, amount)
-            print(result)
+            
+            # Validate withdrawal amount
+            while True:
+                try:
+                    amount = float(input("Enter amount to withdraw: "))
+                    if amount <= 0:
+                        print("Withdrawal amount must be greater than zero.")
+                        continue
+                    break
+                except ValueError:
+                    print("Invalid input. Please enter a valid dollar amount.")
+            
+            try:
+                result = bank.withdraw(username, account_name, amount)
+                print(result)
+            except ValueError as e:
+                print(str(e))  # Print the error message (e.g., "Insufficient funds.")
+
         elif choice == "3":  # Show balances for all accounts
             user_accounts = bank.accounts.get(username, {})
             if user_accounts:
@@ -101,12 +143,15 @@ def logged_in_menu(bank, username):
                     print(f"{account_name}: ${account.get_balance():.2f}")
             else:
                 print("No accounts found.")
+
         elif choice == "4":  # Create account logic
             result = add_account(bank, username)
             print(result)
+
         elif choice == "5":
             print("Logging out...")
             break
+
         elif choice == "6":  # Simulate growth
             user_accounts = bank.accounts.get(username, {})
             if not user_accounts:
@@ -117,14 +162,27 @@ def logged_in_menu(bank, username):
                 print(f"- {account_name}")
             account_name = input("Enter account name: ")
             if account_name not in user_accounts:
-                print("Invalid account name. Try again.")
+                print("Account does not exist.")  # Ensure this matches the test expectation
                 continue
+
             account = user_accounts[account_name]
-            result = "Entered account is not a savings account."  # Default message
-            if account.account_type == "savings":
-                months = int(input("Enter number of months to simulate: "))
-                result = bank.simulate_growth(username, account_name, months)
+            if account.account_type != "savings":
+                print("Growth simulation is only applicable for savings accounts.")
+                continue
+
+            while True:
+                try:
+                    months = int(input("Enter number of months to simulate: "))
+                    if months <= 0:
+                        print("Number of months must be greater than zero.")
+                        continue
+                    break
+                except ValueError:
+                    print("Invalid input. Please enter a valid number of months.")
+
+            result = bank.simulate_growth(username, account_name, months)
             print(result)
+
         else:
             print("Invalid choice. Try again.")
             

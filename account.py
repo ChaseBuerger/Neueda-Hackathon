@@ -21,6 +21,9 @@ class Account:
             return self.balance * self.interest_rate
         return 0.0
 
+    def get_balance(self):
+        return self.balance
+
     def to_dict(self):
         return {
             "account_type": self.account_type,

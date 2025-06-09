@@ -24,7 +24,8 @@ def main():
         print("2. Create Account")
         print("3. Deposit")
         print("4. Withdraw")
-        print("5. Exit")
+        print("5. Show Balance")  # New option added
+        print("6. Exit")  # Updated exit option number
         choice = input("Enter your choice: ")
 
         if choice == "1":
@@ -50,13 +51,19 @@ def main():
             amount = float(input("Enter amount to deposit: "))
             message = bank.deposit(username, amount)
             print(message)
-
         elif choice == "4":
             username = input("Username: ")
             amount = float(input("Enter amount to withdraw: "))
             message = bank.withdraw(username, amount)
             print(message)
-        elif choice == "5":
+        elif choice == "5":  # New option logic
+            username = input("Username: ")
+            account = bank.get_account(username)  # Retrieve the Account object
+            if account:
+                print(f"Your balance is: ${account.get_balance()}")  # Use get_balance method
+            else:
+                print("Account not found or not logged in.")
+        elif choice == "6":  # Updated exit option number
             save_data(bank)
             print("Goodbye!")
             break

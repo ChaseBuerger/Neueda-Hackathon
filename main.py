@@ -34,14 +34,8 @@ def main_menu(bank):
         elif choice == "2":
             username = input("Choose a username: ")
             password = input("Choose a password: ")
-            account_type = input("Account type (savings/checking): ").lower()
-            if account_type in ["savings", "checking"]:
-                if bank.create_account(username, password, account_type):
-                    print("Account created successfully!")
-                else:
-                    print("Username already exists.")
-            else:
-                print("Invalid account type.")
+            result = add_account(bank, username, password)
+            print(result)
         elif choice == "3":
             save_data(bank)
             print("Goodbye!")
@@ -49,34 +43,47 @@ def main_menu(bank):
         else:
             print("Invalid choice. Try again.")
 
+def add_account(bank, username, password=None):
+    account_name = input("Enter account name: ")
+    account_type = input("Account type (savings/checking): ").lower()
+    initial_deposit = float(input("Enter initial deposit amount: "))
+    if account_type not in ["savings", "checking"]:
+        return "Invalid account type."
+    result = bank.create_account(username, password, account_type, account_name, initial_deposit)
+    return result
+
 def logged_in_menu(bank, username):
     while True:
         print(f"\nWelcome, {username}!")
         print("1. Deposit")
         print("2. Withdraw")
-        print("3. Show Balance")
-        print("4. Logout")
+        print("3. Show Balances")
+        print("4. Create Account")
+        print("5. Logout")
         choice = input("Enter your choice: ")
 
-        if choice == "1":
+        if choice == "1":  # Deposit logic
+            account_name = input("Enter account name: ")
             amount = float(input("Enter amount to deposit: "))
-            if bank.deposit(username, amount):
-                print("Deposit successful!")
-            else:
-                print("Deposit failed. Check username or account.")
-        elif choice == "2":
+            result = bank.deposit(username, account_name, amount)
+            print(result)
+        elif choice == "2":  # Withdraw logic
+            account_name = input("Enter account name: ")
             amount = float(input("Enter amount to withdraw: "))
-            if bank.withdraw(username, amount):
-                print("Withdrawal successful!")
+            result = bank.withdraw(username, account_name, amount)
+            print(result)
+        elif choice == "3":  # Show balances for all accounts
+            user_accounts = bank.accounts.get(username, {})
+            if user_accounts:
+                print("Your accounts and balances:")
+                for account_name, account in user_accounts.items():
+                    print(f"{account_name}: ${account.get_balance():.2f}")
             else:
-                print("Withdrawal failed. Check username, account, or balance.")
-        elif choice == "3":  # New option logic
-            account = bank.get_account(username)  # Retrieve the Account object
-            if account:
-                print(f"Your balance is: ${account.get_balance()}")  # Use get_balance method
-            else:
-                print("Account not found or not logged in.")
-        elif choice == "4":
+                print("No accounts found.")
+        elif choice == "4":  # Create account logic
+            result = add_account(bank, username)
+            print(result)
+        elif choice == "5":
             print("Logging out...")
             break
         else:

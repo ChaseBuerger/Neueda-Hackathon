@@ -54,7 +54,8 @@ def logged_in_menu(bank, username):
         print(f"\nWelcome, {username}!")
         print("1. Deposit")
         print("2. Withdraw")
-        print("3. Logout")
+        print("3. Show Balance")
+        print("4. Logout")
         choice = input("Enter your choice: ")
 
         if choice == "1":
@@ -69,7 +70,13 @@ def logged_in_menu(bank, username):
                 print("Withdrawal successful!")
             else:
                 print("Withdrawal failed. Check username, account, or balance.")
-        elif choice == "3":
+        elif choice == "3":  # New option logic
+            account = bank.get_account(username)  # Retrieve the Account object
+            if account:
+                print(f"Your balance is: ${account.get_balance()}")  # Use get_balance method
+            else:
+                print("Account not found or not logged in.")
+        elif choice == "4":
             print("Logging out...")
             break
         else:

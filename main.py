@@ -15,17 +15,12 @@ def save_data(bank):
     with open(DATA_FILE, "w") as file:
         json.dump(bank.save_to_data(), file)
 
-def main():
-    bank = Bank()
-    load_data(bank)
+def main_menu(bank):
     while True:
         print("\nWelcome to the Bank CLI")
         print("1. Login")
         print("2. Create Account")
-        print("3. Deposit")
-        print("4. Withdraw")
-        print("5. Show Balance")  # New option added
-        print("6. Exit")  # Updated exit option number
+        print("3. Exit")
         choice = input("Enter your choice: ")
 
         if choice == "1":
@@ -33,6 +28,7 @@ def main():
             password = input("Password: ")
             if bank.login(username, password):
                 print("Login successful!")
+                logged_in_menu(bank, username)
             else:
                 print("Invalid credentials.")
         elif choice == "2":
@@ -47,28 +43,49 @@ def main():
             else:
                 print("Invalid account type.")
         elif choice == "3":
-            username = input("Username: ")
-            amount = float(input("Enter amount to deposit: "))
-            message = bank.deposit(username, amount)
-            print(message)
-        elif choice == "4":
-            username = input("Username: ")
-            amount = float(input("Enter amount to withdraw: "))
-            message = bank.withdraw(username, amount)
-            print(message)
-        elif choice == "5":  # New option logic
-            username = input("Username: ")
-            account = bank.get_account(username)  # Retrieve the Account object
-            if account:
-                print(f"Your balance is: ${account.get_balance()}")  # Use get_balance method
-            else:
-                print("Account not found or not logged in.")
-        elif choice == "6":  # Updated exit option number
             save_data(bank)
             print("Goodbye!")
             break
         else:
             print("Invalid choice. Try again.")
+
+def logged_in_menu(bank, username):
+    while True:
+        print(f"\nWelcome, {username}!")
+        print("1. Deposit")
+        print("2. Withdraw")
+        print("3. Show Balance")
+        print("4. Logout")
+        choice = input("Enter your choice: ")
+
+        if choice == "1":
+            amount = float(input("Enter amount to deposit: "))
+            if bank.deposit(username, amount):
+                print("Deposit successful!")
+            else:
+                print("Deposit failed. Check username or account.")
+        elif choice == "2":
+            amount = float(input("Enter amount to withdraw: "))
+            if bank.withdraw(username, amount):
+                print("Withdrawal successful!")
+            else:
+                print("Withdrawal failed. Check username, account, or balance.")
+        elif choice == "3":  # New option logic
+            account = bank.get_account(username)  # Retrieve the Account object
+            if account:
+                print(f"Your balance is: ${account.get_balance()}")  # Use get_balance method
+            else:
+                print("Account not found or not logged in.")
+        elif choice == "4":
+            print("Logging out...")
+            break
+        else:
+            print("Invalid choice. Try again.")
+
+def main():
+    bank = Bank()
+    load_data(bank)
+    main_menu(bank)
 
 if __name__ == "__main__":
     main()
